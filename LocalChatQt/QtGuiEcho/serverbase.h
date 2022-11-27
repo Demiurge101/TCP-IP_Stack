@@ -9,6 +9,7 @@ class ServerBase : public QTcpServer
 public:
     explicit ServerBase(QObject *parent = 0);
     ~ServerBase();
+    void listen();
     void run();
     void delsocket(int descriptor);
     bool isEmpty();

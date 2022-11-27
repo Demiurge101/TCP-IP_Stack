@@ -5,6 +5,7 @@
 #include <QTcpSocket>
 #include <QDataStream>
 #include <QTimer>
+#include <QFile>
 
 namespace Ui {
 class MainWindow;
@@ -34,7 +35,12 @@ private:
     Ui::MainWindow *ui;
     QTcpSocket* socket;
     QTimer* AutoTimer = nullptr;
+    QFile ioTextBrow;
+    QString browser{ };
+    int CounterStr = 0;    
+    int len_mess = 0, len = 0, len_half = 0;
     void sendToServer(QString str);
+    int findPosSize(QByteArray array);
 };
 
 #endif // MAINWINDOW_H

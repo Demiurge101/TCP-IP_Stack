@@ -3,12 +3,6 @@
 ServerBase::ServerBase(QObject *parent) : QTcpServer(parent){
 
     mTcpServer = new QTcpServer(this);
-
-    if(!mTcpServer->listen(QHostAddress :: LocalHost, 23)){
-        qDebug() << "server is not started";
-    } else {
-        qDebug() << "server is started";
-    }
 }
 
 ServerBase::~ServerBase(){
@@ -16,6 +10,15 @@ ServerBase::~ServerBase(){
         delete Clients[i];
     Clients.clear();
     delete mTcpServer;
+}
+
+void ServerBase::listen(){
+
+    if(!mTcpServer->listen(QHostAddress :: LocalHost, 23)){
+        qDebug() << "server is not started";
+    } else {
+        qDebug() << "server is started";
+    }
 }
 
 void ServerBase::run(){
@@ -61,16 +64,24 @@ void ServerBase::slotNewConnection(){
     connect(mSocket,&mConnectSocket::transMessage, this, &ServerBase::slotClientHandler, Qt::QueuedConnection);
 
     Clients.push_back(mSocket);
-    qDebug() << "Client connect " << mSocket->getsocketId();
+    qDebug() << "Client connect " << mSocket->getsocketId();    
     lastDescriptor = mSocket->getsocketId();
 }
 
 void ServerBase::slotClientHandler(QByteArray array, int descriptor)
 {
-    QByteArray des;
-    des.setNum(descriptor);
+    QByteArray des, mark_size;
     for(int i = 0; i < Clients.size(); i++){
-        Clients[i]->write(des + array);
+        des.clear();
+        des.setNum(descriptor);
+        if(descriptor < 1000)
+            des.push_front("0");
+        int len = des.length() + array.length();
+        mark_size.setNum(len);
+        if(len < 10)
+            mark_size.push_front("0");
+        mark_size.push_front("@LABEL@/");
+        Clients[i]->write(mark_size + des + array);
     }
 }
 

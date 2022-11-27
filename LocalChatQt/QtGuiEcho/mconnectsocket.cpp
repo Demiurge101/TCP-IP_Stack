@@ -3,11 +3,13 @@
 mConnectSocket::mConnectSocket(QTcpSocket *sock, QObject *parent){
     socket = sock;
     socketId = sock->socketDescriptor();
-    QByteArray des;
+    QByteArray des, mark_size;
     des.setNum(socketId);
     if(socketId < 1000)
         des.push_front("0");
-    socket->write(des + "Welcome to Echo!");
+    mark_size.setNum(20);
+    mark_size.push_front("@LABEL@/");
+    socket->write(mark_size + des + "Welcome to Echo!");
 
     timer = new QTimer(this);
     timer->start(30000);
@@ -27,7 +29,8 @@ mConnectSocket::~mConnectSocket(){
     }
     socketId = 0;
     delete socket;
-    delete timer;
+    if(timer != nullptr)
+        delete timer;
 }
 
 void mConnectSocket::SlotReadyRead(){

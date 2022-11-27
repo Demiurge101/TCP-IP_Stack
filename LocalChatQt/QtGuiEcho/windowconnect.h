@@ -2,6 +2,7 @@
 #define WINDOWCONNECT_H
 
 #include <QWidget>
+#include <QFile>
 
 namespace Ui {
 class windowConnect;
@@ -24,7 +25,11 @@ signals:
 private:
     void closeEvent(QCloseEvent *);
     Ui::windowConnect *ui;
-    int windowid;
+    QFile ioTextBrow;
+    QString browser{ };
+    int CounterStr = 0;
+    int len = 0;
+    int len_half = 0;
 };
 
 #endif // WINDOWCONNECT_H

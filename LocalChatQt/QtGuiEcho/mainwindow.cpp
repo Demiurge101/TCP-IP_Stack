@@ -9,8 +9,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 }
 
 MainWindow::~MainWindow()
-{  
-    delete newcon;
+{
+    if(newcon != nullptr)
+        delete newcon;
     delete echo;
     delete ui;
 }
@@ -18,6 +19,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
+    echo->listen();
     if(echo->state() && IsNotStarted){
         echo->run();
         IsNotStarted = false;
@@ -47,7 +49,7 @@ void MainWindow::connected_Client()
         newcon->show();
     }
 
-    connect(newcon,&windowConnect::closeWindow,this, &MainWindow::Close_window,Qt::DirectConnection);
+    connect(newcon,&windowConnect::closeWindow,this, &MainWindow::Close_window,Qt::QueuedConnection);
 }
 
 void MainWindow::disconnect_Client(int descriptor)
